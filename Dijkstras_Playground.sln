@@ -1,0 +1,36 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algorithm", "Algorithm\Algorithm.csproj", "{B0296617-7E30-D4E3-95EB-6AE317BF290C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphVisualizer", "GraphVisualizer\GraphVisualizer.csproj", "{9F2CDA2E-7A8D-A87F-FCB2-E67441E62B72}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vertex", "Vertex\Vertex.csproj", "{19A952A6-378B-EBD9-5322-BD9476D88E6F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B0296617-7E30-D4E3-95EB-6AE317BF290C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0296617-7E30-D4E3-95EB-6AE317BF290C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0296617-7E30-D4E3-95EB-6AE317BF290C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0296617-7E30-D4E3-95EB-6AE317BF290C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F2CDA2E-7A8D-A87F-FCB2-E67441E62B72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F2CDA2E-7A8D-A87F-FCB2-E67441E62B72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F2CDA2E-7A8D-A87F-FCB2-E67441E62B72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F2CDA2E-7A8D-A87F-FCB2-E67441E62B72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19A952A6-378B-EBD9-5322-BD9476D88E6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19A952A6-378B-EBD9-5322-BD9476D88E6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19A952A6-378B-EBD9-5322-BD9476D88E6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19A952A6-378B-EBD9-5322-BD9476D88E6F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C78217E8-66A4-4D7A-8CA7-979487DCAF15}
+	EndGlobalSection
+EndGlobal
