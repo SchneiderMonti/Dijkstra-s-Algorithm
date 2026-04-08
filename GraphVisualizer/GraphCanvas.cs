@@ -32,9 +32,16 @@ public class GraphCanvas : Control
             var start = new Point(edge.source.x * Scale + 40, edge.source.y * Scale + 40);
             var end = new Point(edge.target.x * Scale + 40, edge.target.y * Scale + 40);
 
-            var pen = edge.IsPath
-                ? new Pen(Brushes.Red, 3)
-                : new Pen(Brushes.LightGray, 1.5);
+            Pen pen = new Pen(Brushes.LightGray, 1.5);
+
+            if (edge.IsActive)
+            {
+                pen = new Pen(Brushes.Yellow, 4);
+            }
+            else if (edge.IsPath)
+            {
+                pen = new Pen(Brushes.Red, 3);
+            }
 
             context.DrawLine(pen, start, end);
         }
@@ -70,33 +77,33 @@ public class GraphCanvas : Control
                 FlowDirection.LeftToRight,
                 new Typeface("Arial"),
                 12,
-                Brushes.Black
+                Brushes.White
             );
 
             context.DrawText(text, new Point(centerX - 10, centerY - 25));
         }
     }
     protected override void OnPointerPressed(PointerPressedEventArgs e)
-{
-    base.OnPointerPressed(e);
-
-    var point = e.GetPosition(this);
-
-    foreach (var vertex in Vertices)
     {
-        double centerX = vertex.x * Scale + 40;
-        double centerY = vertex.y * Scale + 40;
+        base.OnPointerPressed(e);
 
-        double dx = point.X - centerX;
-        double dy = point.Y - centerY;
+        var point = e.GetPosition(this);
 
-        double distance = Math.Sqrt(dx * dx + dy * dy);
-
-        if (distance <= VertexRadius)
+        foreach (var vertex in Vertices)
         {
-            VertexClicked?.Invoke(vertex);
-            break;
+            double centerX = vertex.x * Scale + 40;
+            double centerY = vertex.y * Scale + 40;
+
+            double dx = point.X - centerX;
+            double dy = point.Y - centerY;
+
+            double distance = Math.Sqrt(dx * dx + dy * dy);
+
+            if (distance <= VertexRadius)
+            {
+                VertexClicked?.Invoke(vertex);
+                break;
+            }
         }
     }
-}
 }

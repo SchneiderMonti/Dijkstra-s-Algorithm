@@ -1385,19 +1385,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\User\\.nuget\\packages\\": {}
+    "/Users/timon/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\User\\OneDrive\\Desktop\\SS26\\C#\\Dijkstras_Playground\\GraphVisualizer\\GraphVisualizer.csproj",
+      "projectUniqueName": "/Users/timon/Desktop/SS26/CSD/Final_Assignment/Dijkstra-s-Algorithm/GraphVisualizer/GraphVisualizer.csproj",
       "projectName": "GraphVisualizer",
-      "projectPath": "C:\\Users\\User\\OneDrive\\Desktop\\SS26\\C#\\Dijkstras_Playground\\GraphVisualizer\\GraphVisualizer.csproj",
-      "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\User\\OneDrive\\Desktop\\SS26\\C#\\Dijkstras_Playground\\GraphVisualizer\\obj\\",
+      "projectPath": "/Users/timon/Desktop/SS26/CSD/Final_Assignment/Dijkstra-s-Algorithm/GraphVisualizer/GraphVisualizer.csproj",
+      "packagesPath": "/Users/timon/.nuget/packages/",
+      "outputPath": "/Users/timon/Desktop/SS26/CSD/Final_Assignment/Dijkstra-s-Algorithm/GraphVisualizer/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/Users/timon/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
@@ -1409,8 +1409,8 @@
         "net10.0": {
           "targetAlias": "net10.0",
           "projectReferences": {
-            "C:\\Users\\User\\OneDrive\\Desktop\\SS26\\C#\\Dijkstras_Playground\\Vertex\\Vertex.csproj": {
-              "projectPath": "C:\\Users\\User\\OneDrive\\Desktop\\SS26\\C#\\Dijkstras_Playground\\Vertex\\Vertex.csproj"
+            "/Users/timon/Desktop/SS26/CSD/Final_Assignment/Dijkstra-s-Algorithm/Vertex/Vertex.csproj": {
+              "projectPath": "/Users/timon/Desktop/SS26/CSD/Final_Assignment/Dijkstra-s-Algorithm/Vertex/Vertex.csproj"
             }
           }
         }
@@ -1468,7 +1468,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/10.0.103/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",

@@ -7,8 +7,9 @@ public class BaseEdge
     public BaseVertex? target {get; set;}
     public string edgename;
     public double weight {get; set;}
+    public bool IsActive { get; set; } = false;
 
-    public bool IsPath {get; set;} = false;
+    public bool IsPath { get; set; } = false;
     public BaseEdge(BaseVertex Source, BaseVertex Target, string name, double weight)
     {
         this.source = Source;

@@ -4,6 +4,7 @@ using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Vertex;
+using System.Threading.Tasks;
 
 namespace GraphVisualizer;
 
@@ -54,9 +55,10 @@ private void ResetGraphState()
         vertex.IsPath = false;
     }
 
-    foreach (var edge in _edges)
-    {
-        edge.IsPath = false;
+        foreach (var edge in _edges)
+        {
+            edge.IsPath = false;
+            edge.IsActive = false;
     }
 
     if (_startVertex != null)
@@ -70,7 +72,7 @@ private List<BaseEdge> GetOutgoingEdges(BaseVertex vertex)
         .ToList();
 }
 
-private (Dictionary<BaseVertex, double> dist, Dictionary<BaseVertex, BaseVertex?> prev)
+private async Task<(Dictionary<BaseVertex, double> dist, Dictionary<BaseVertex, BaseVertex?> prev)>
     RunDijkstra(BaseVertex start)
 {
     var dist = new Dictionary<BaseVertex, double>();
@@ -99,29 +101,40 @@ private (Dictionary<BaseVertex, double> dist, Dictionary<BaseVertex, BaseVertex?
         current.IsVisited = true;
 
         foreach (var edge in GetOutgoingEdges(current))
-        {
-            if (edge.target == null)
-                continue;
+{
+    if (edge.target == null)
+        continue;
 
-            var neighbor = edge.target;
+    var neighbor = edge.target;
 
-            if (!unvisited.Contains(neighbor))
-                continue;
+    if (!unvisited.Contains(neighbor))
+        continue;
 
-            double alternative = dist[current] + edge.weight;
+    // 🔥 highlight current edge
+    edge.IsActive = true;
 
-            if (alternative < dist[neighbor])
-            {
-                dist[neighbor] = alternative;
-                prev[neighbor] = current;
-            }
-        }
+    MyGraphCanvas.InvalidateVisual();
+    await Task.Delay(120);
+
+    double alternative = dist[current] + edge.weight;
+
+    if (alternative < dist[neighbor])
+    {
+        dist[neighbor] = alternative;
+        prev[neighbor] = current;
+    }
+
+    // 🔥 fade edge again
+    edge.IsActive = false;
+
+    MyGraphCanvas.InvalidateVisual();
+}
     }
 
     return (dist, prev);
 }
 
-private void OnVertexClicked(BaseVertex clickedVertex)
+private async void OnVertexClicked(BaseVertex clickedVertex)
 {
     if (_startVertex == null)
         return;
@@ -131,7 +144,7 @@ private void OnVertexClicked(BaseVertex clickedVertex)
     _startVertex.IsStart = true;
     clickedVertex.IsTarget = true;
 
-    var (dist, prev) = RunDijkstra(_startVertex);
+    var (dist, prev) = await RunDijkstra(_startVertex);
 
     if (double.IsPositiveInfinity(dist[clickedVertex]))
     {
