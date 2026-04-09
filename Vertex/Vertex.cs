@@ -8,8 +8,9 @@ public class BaseVertex
     public bool IsTarget {get; set;} = false;
     public bool IsVisited {get; set;} = false;
     public bool IsPath {get; set;} = false;
+    public bool IsWall { get; set; } = false;
 
-    public string Name {get; set; } = "";
+    public string Name { get; set; } = "";
     static Random rand = new Random();
     public BaseVertex(string name)
     {

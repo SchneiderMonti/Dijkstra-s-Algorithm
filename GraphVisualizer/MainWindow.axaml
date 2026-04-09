@@ -15,8 +15,9 @@
     <TextBox x:Name="NeighborCountBox" Width="60" Text="2"/>
 
     <Button Content="Generate Graph" Click="GenerateGraph_Click"/>
+    <Button Content="Clear Walls" Click="ClearWalls_Click"/>
 
-    <TextBlock x:Name="InfoText" Text="Click Generate Graph" VerticalAlignment="Center"/>
+    <TextBlock x:Name="InfoText" Text="Left click = target, Right click = wall" VerticalAlignment="Center"/>
 
 </StackPanel>
 

@@ -15,11 +15,12 @@ public partial class MainWindow : Window
 private List<BaseEdge> _edges = new();
 private BaseVertex? _startVertex;
 
-    public MainWindow()
-    {
-        InitializeComponent();
-        MyGraphCanvas.VertexClicked += OnVertexClicked;
-    }
+   public MainWindow()
+{
+    InitializeComponent();
+    MyGraphCanvas.VertexClicked += OnVertexClicked;
+    MyGraphCanvas.VertexRightClicked += OnVertexRightClicked;
+}
 
 private void GenerateGraph_Click(object? sender, RoutedEventArgs e)
 {
@@ -48,11 +49,11 @@ private int ParseOrDefault(string? text, int defaultValue)
 
 private void ResetGraphState()
 {
-    foreach (var vertex in _vertices)
-    {
-        vertex.IsTarget = false;
-        vertex.IsVisited = false;
-        vertex.IsPath = false;
+        foreach (var vertex in _vertices)
+        {
+            vertex.IsTarget = false;
+            vertex.IsVisited = false;
+            vertex.IsPath = false;
     }
 
         foreach (var edge in _edges)
@@ -77,7 +78,9 @@ private async Task<(Dictionary<BaseVertex, double> dist, Dictionary<BaseVertex, 
 {
     var dist = new Dictionary<BaseVertex, double>();
     var prev = new Dictionary<BaseVertex, BaseVertex?>();
-    var unvisited = new List<BaseVertex>(_vertices);
+    var unvisited = _vertices
+        .Where(v => !v.IsWall)
+        .ToList();
 
     foreach (var vertex in _vertices)
     {
@@ -101,34 +104,33 @@ private async Task<(Dictionary<BaseVertex, double> dist, Dictionary<BaseVertex, 
         current.IsVisited = true;
 
         foreach (var edge in GetOutgoingEdges(current))
-{
-    if (edge.target == null)
-        continue;
+        {
+            if (edge.target == null)
+                continue;
 
-    var neighbor = edge.target;
+            var neighbor = edge.target;
 
-    if (!unvisited.Contains(neighbor))
-        continue;
+            if (neighbor.IsWall)
+                continue;
 
-    // 🔥 highlight current edge
-    edge.IsActive = true;
+            if (!unvisited.Contains(neighbor))
+                continue;
 
-    MyGraphCanvas.InvalidateVisual();
-    await Task.Delay(120);
+            edge.IsActive = true;
+            MyGraphCanvas.InvalidateVisual();
+            await Task.Delay(120);
 
-    double alternative = dist[current] + edge.weight;
+            double alternative = dist[current] + edge.weight;
 
-    if (alternative < dist[neighbor])
-    {
-        dist[neighbor] = alternative;
-        prev[neighbor] = current;
-    }
+            if (alternative < dist[neighbor])
+            {
+                dist[neighbor] = alternative;
+                prev[neighbor] = current;
+            }
 
-    // 🔥 fade edge again
-    edge.IsActive = false;
-
-    MyGraphCanvas.InvalidateVisual();
-}
+            edge.IsActive = false;
+            MyGraphCanvas.InvalidateVisual();
+        }
     }
 
     return (dist, prev);
@@ -138,6 +140,12 @@ private async void OnVertexClicked(BaseVertex clickedVertex)
 {
     if (_startVertex == null)
         return;
+
+    if (clickedVertex.IsWall)
+    {
+        InfoText.Text = "You cannot select a wall as target.";
+        return;
+    }
 
     ResetGraphState();
 
@@ -174,26 +182,38 @@ private List<BaseVertex> BuildPath(BaseVertex target, Dictionary<BaseVertex, Bas
     return path;
 }
 
-private void HighlightPath(List<BaseVertex> path)
+    private void HighlightPath(List<BaseVertex> path)
+    {
+        foreach (var vertex in path)
+        {
+            vertex.IsPath = true;
+        }
+
+        for (int i = 0; i < path.Count - 1; i++)
+        {
+            var from = path[i];
+            var to = path[i + 1];
+
+            var edge = _edges.FirstOrDefault(e => e.source == from && e.target == to);
+            if (edge != null)
+                edge.IsPath = true;
+
+            var reverse = _edges.FirstOrDefault(e => e.source == to && e.target == from);
+            if (reverse != null)
+                reverse.IsPath = true;
+        }
+    }
+
+private void ClearWalls_Click(object? sender, RoutedEventArgs e)
 {
-    foreach (var vertex in path)
+    foreach (var vertex in _vertices)
     {
-        vertex.IsPath = true;
+        vertex.IsWall = false;
     }
 
-    for (int i = 0; i < path.Count - 1; i++)
-    {
-        var from = path[i];
-        var to = path[i + 1];
-
-        var edge = _edges.FirstOrDefault(e => e.source == from && e.target == to);
-        if (edge != null)
-            edge.IsPath = true;
-
-        var reverse = _edges.FirstOrDefault(e => e.source == to && e.target == from);
-        if (reverse != null)
-            reverse.IsPath = true;
-    }
+    ResetGraphState();
+    InfoText.Text = "All walls cleared.";
+    MyGraphCanvas.InvalidateVisual();
 }
     // --- CREATE VERTICES ---
     private List<BaseVertex> CreateVertices(int count)
@@ -289,11 +309,38 @@ private void AddUndirectedEdge(List<BaseEdge> edges, BaseVertex a, BaseVertex b,
     edges.Add(new BaseEdge(b, a, $"{b.Name}->{a.Name}", weight));
 }
 
-private bool HasUndirectedEdge(List<BaseEdge> edges, BaseVertex a, BaseVertex b)
+    private bool HasUndirectedEdge(List<BaseEdge> edges, BaseVertex a, BaseVertex b)
+    {
+        return edges.Any(e =>
+            (e.source == a && e.target == b) ||
+            (e.source == b && e.target == a));
+    }
+
+private void OnVertexRightClicked(BaseVertex clickedVertex)
 {
-    return edges.Any(e =>
-        (e.source == a && e.target == b) ||
-        (e.source == b && e.target == a));
+    if (clickedVertex.IsStart)
+        return;
+
+    clickedVertex.IsWall = !clickedVertex.IsWall;
+
+    if (clickedVertex.IsWall)
+    {
+        clickedVertex.IsTarget = false;
+        clickedVertex.IsVisited = false;
+        clickedVertex.IsPath = false;
+    }
+
+    foreach (var edge in _edges)
+    {
+        edge.IsActive = false;
+        edge.IsPath = false;
+    }
+
+    InfoText.Text = clickedVertex.IsWall
+        ? $"{clickedVertex.Name} is now a wall."
+        : $"{clickedVertex.Name} is no longer a wall.";
+
+    MyGraphCanvas.InvalidateVisual();
 }
 
     private double Distance(BaseVertex a, BaseVertex b)

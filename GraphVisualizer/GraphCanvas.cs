@@ -18,6 +18,7 @@ public class GraphCanvas : Control
     public const double Scale = 6;
 
     public event Action<BaseVertex>? VertexClicked;
+    public event Action<BaseVertex>? VertexRightClicked;
 
     public override void Render(DrawingContext context)
     {
@@ -51,7 +52,9 @@ public class GraphCanvas : Control
         {
             IBrush fill = Brushes.SteelBlue;
 
-            if (vertex.IsStart)
+            if (vertex.IsWall)
+                fill = Brushes.Black;
+            else if (vertex.IsStart)
                 fill = Brushes.OrangeRed;
             else if (vertex.IsTarget)
                 fill = Brushes.LimeGreen;
@@ -88,6 +91,7 @@ public class GraphCanvas : Control
         base.OnPointerPressed(e);
 
         var point = e.GetPosition(this);
+        var properties = e.GetCurrentPoint(this).Properties;
 
         foreach (var vertex in Vertices)
         {
@@ -96,12 +100,15 @@ public class GraphCanvas : Control
 
             double dx = point.X - centerX;
             double dy = point.Y - centerY;
-
             double distance = Math.Sqrt(dx * dx + dy * dy);
 
             if (distance <= VertexRadius)
             {
-                VertexClicked?.Invoke(vertex);
+                if (properties.IsRightButtonPressed)
+                    VertexRightClicked?.Invoke(vertex);
+                else if (properties.IsLeftButtonPressed)
+                    VertexClicked?.Invoke(vertex);
+
                 break;
             }
         }
