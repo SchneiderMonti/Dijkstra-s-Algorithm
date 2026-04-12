@@ -24,8 +24,8 @@ private BaseVertex? _startVertex;
 
 private void GenerateGraph_Click(object? sender, RoutedEventArgs e)
 {
-    int vertexCount = ParseOrDefault(VertexCountBox.Text, 45);
-    int neighborCount = ParseOrDefault(NeighborCountBox.Text, 2);
+    int vertexCount = ParseOrDefault(VertexCountBox.Text, 15);
+    int neighborCount = ParseOrDefault(NeighborCountBox.Text, 3);
 
     _vertices = CreateVertices(vertexCount);
     _edges = CreateEdges(_vertices, neighborCount);
@@ -156,7 +156,7 @@ private async void OnVertexClicked(BaseVertex clickedVertex)
 
     if (double.IsPositiveInfinity(dist[clickedVertex]))
     {
-        InfoText.Text = $"No path from Start to {clickedVertex.Name}";
+        InfoText.Text = $"No path from Eldoria to {clickedVertex.Name}";
         MyGraphCanvas.InvalidateVisual();
         return;
     }
@@ -216,22 +216,47 @@ private void ClearWalls_Click(object? sender, RoutedEventArgs e)
     MyGraphCanvas.InvalidateVisual();
 }
     // --- CREATE VERTICES ---
-    private List<BaseVertex> CreateVertices(int count)
+private List<BaseVertex> CreateVertices(int count)
+{
+    var vertices = new List<BaseVertex>();
+
+    var baseCityNames = new List<string>
     {
-        var vertices = new List<BaseVertex>();
+        "Eldoria", "Drakmoor", "Valencrest", "Mythrune", "Stormhaven",
+        "Aetherfall", "Ravenrock", "Silverkeep", "Thornvale", "Frostgarde",
+        "Duskmire", "Ironspire", "Mooncliff", "Emberfall", "Highreach",
+        "Shadowfen", "Brighthelm", "Windermere", "Grimwatch", "Sunforge",
+        "Blackwater", "Starhaven", "Oakenshire", "Crystalia", "Dragon’s Hollow"
+    };
 
-        // start node at (0,0)
-        var start = new BaseVertex(0, 0, "Start");
-        start.IsStart = true;
-        vertices.Add(start);
+    var suffixes = new List<string>
+    {
+        "Lower", "Upper", "Center", "Outskirts"
+    };
 
-        for (int i = 1; i < count; i++)
+    // Start city
+    var start = new BaseVertex(0, 0, "Eldoria");
+    start.IsStart = true;
+    vertices.Add(start);
+
+    for (int i = 1; i < count; i++)
+    {
+        int baseIndex = (i - 1) % baseCityNames.Count;
+        int suffixIndex = (i - 1) / baseCityNames.Count;
+
+        string name = baseCityNames[baseIndex];
+
+        if (suffixIndex > 0)
         {
-            vertices.Add(new BaseVertex($"V{i}"));
+            string suffix = suffixes[(suffixIndex - 1) % suffixes.Count];
+            name = $"{suffix} {name}";
         }
 
-        return vertices;
+        vertices.Add(new BaseVertex(name));
     }
+
+    return vertices;
+}
 
     // --- CREATE EDGES ---
 private List<BaseEdge> CreateEdges(List<BaseVertex> vertices, int neighborCount)

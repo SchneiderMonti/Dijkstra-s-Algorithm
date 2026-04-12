@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -15,7 +16,7 @@ public class GraphCanvas : Control
     public List<BaseEdge> Edges { get; set; } = new();
 
     public const double VertexRadius = 10;
-    public const double Scale = 6;
+    private const double Padding = 60;
 
     public event Action<BaseVertex>? VertexClicked;
     public event Action<BaseVertex>? VertexRightClicked;
@@ -24,25 +25,26 @@ public class GraphCanvas : Control
     {
         base.Render(context);
 
+        if (Vertices == null || Vertices.Count == 0)
+            return;
+
+        var layout = GetLayoutValues();
+
         // draw edges first
         foreach (var edge in Edges)
         {
             if (edge.source == null || edge.target == null)
                 continue;
 
-            var start = new Point(edge.source.x * Scale + 40, edge.source.y * Scale + 40);
-            var end = new Point(edge.target.x * Scale + 40, edge.target.y * Scale + 40);
+            var start = Transform(edge.source, layout);
+            var end = Transform(edge.target, layout);
 
             Pen pen = new Pen(Brushes.LightGray, 1.5);
 
             if (edge.IsActive)
-            {
                 pen = new Pen(Brushes.Yellow, 4);
-            }
             else if (edge.IsPath)
-            {
-                pen = new Pen(Brushes.Red, 3);
-            }
+                pen = new Pen(Brushes.Gold, 3);
 
             context.DrawLine(pen, start, end);
         }
@@ -53,9 +55,9 @@ public class GraphCanvas : Control
             IBrush fill = Brushes.SteelBlue;
 
             if (vertex.IsWall)
-                fill = Brushes.Black;
+                fill = Brushes.Red;
             else if (vertex.IsStart)
-                fill = Brushes.OrangeRed;
+                fill = Brushes.Gold;
             else if (vertex.IsTarget)
                 fill = Brushes.LimeGreen;
             else if (vertex.IsPath)
@@ -63,43 +65,46 @@ public class GraphCanvas : Control
             else if (vertex.IsVisited)
                 fill = Brushes.LightBlue;
 
-            var centerX = vertex.x * Scale + 40;
-            var centerY = vertex.y * Scale + 40;
+            var center = Transform(vertex, layout);
 
             context.DrawEllipse(
                 fill,
                 new Pen(Brushes.Black, 1.5),
-                new Point(centerX, centerY),
+                center,
                 VertexRadius,
                 VertexRadius
             );
 
             var text = new FormattedText(
                 vertex.Name,
-                System.Globalization.CultureInfo.InvariantCulture,
+                CultureInfo.InvariantCulture,
                 FlowDirection.LeftToRight,
                 new Typeface("Arial"),
                 12,
-                Brushes.White
+                Brushes.Gold
             );
 
-            context.DrawText(text, new Point(centerX - 10, centerY - 25));
+            context.DrawText(text, new Point(center.X + 12, center.Y - 8));
         }
     }
+
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
 
+        if (Vertices == null || Vertices.Count == 0)
+            return;
+
         var point = e.GetPosition(this);
         var properties = e.GetCurrentPoint(this).Properties;
+        var layout = GetLayoutValues();
 
         foreach (var vertex in Vertices)
         {
-            double centerX = vertex.x * Scale + 40;
-            double centerY = vertex.y * Scale + 40;
+            var center = Transform(vertex, layout);
 
-            double dx = point.X - centerX;
-            double dy = point.Y - centerY;
+            double dx = point.X - center.X;
+            double dy = point.Y - center.Y;
             double distance = Math.Sqrt(dx * dx + dy * dy);
 
             if (distance <= VertexRadius)
@@ -112,5 +117,54 @@ public class GraphCanvas : Control
                 break;
             }
         }
+    }
+
+    private Point Transform(BaseVertex vertex, GraphLayout layout)
+    {
+        double x = (vertex.x - layout.MinX) * layout.Scale + layout.OffsetX;
+        double y = (vertex.y - layout.MinY) * layout.Scale + layout.OffsetY;
+        return new Point(x, y);
+    }
+
+    private GraphLayout GetLayoutValues()
+    {
+        double minX = Vertices.Min(v => (double)v.x);
+        double maxX = Vertices.Max(v => (double)v.x);
+        double minY = Vertices.Min(v => (double)v.y);
+        double maxY = Vertices.Max(v => (double)v.y);
+
+        double graphWidth = Math.Max(1, maxX - minX);
+        double graphHeight = Math.Max(1, maxY - minY);
+
+        double availableWidth = Math.Max(1, Bounds.Width - 2 * Padding);
+        double availableHeight = Math.Max(1, Bounds.Height - 2 * Padding);
+
+        double scaleX = availableWidth / graphWidth;
+        double scaleY = availableHeight / graphHeight;
+        double scale = Math.Min(scaleX, scaleY);
+
+        double drawnWidth = graphWidth * scale;
+        double drawnHeight = graphHeight * scale;
+
+        double offsetX = (Bounds.Width - drawnWidth) / 2;
+        double offsetY = (Bounds.Height - drawnHeight) / 2;
+
+        return new GraphLayout
+        {
+            MinX = minX,
+            MinY = minY,
+            Scale = scale,
+            OffsetX = offsetX,
+            OffsetY = offsetY
+        };
+    }
+
+    private class GraphLayout
+    {
+        public double MinX { get; set; }
+        public double MinY { get; set; }
+        public double Scale { get; set; }
+        public double OffsetX { get; set; }
+        public double OffsetY { get; set; }
     }
 }
