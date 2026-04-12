@@ -1,7 +1,7 @@
 namespace Vertex;
 
-public class StartVertex : BaseVertex
-{
+// Represents the starting point of the algorithm.
+public class StartVertex : BaseVertex{
     public StartVertex(int x, int y, string name) : base(x, y, name)
     {
     }

@@ -1,5 +1,6 @@
 namespace Vertex;
 
+// Represents a normal traversable city vertex.
 public class CityVertex : BaseVertex
 {
     public CityVertex(string name) : base(name)

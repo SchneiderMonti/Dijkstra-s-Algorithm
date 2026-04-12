@@ -1,7 +1,7 @@
 namespace Vertex;
 
-public class WallVertex : BaseVertex
-{
+// Represents a blocked vertex that cannot be traversed.
+public class WallVertex : BaseVertex{
     public WallVertex(int x, int y, string name) : base(x, y, name)
     {
     }

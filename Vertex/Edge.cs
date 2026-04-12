@@ -1,14 +1,19 @@
 namespace Vertex;
 
+// Represents a connection (edge) between two vertices in the graph.
 public class BaseEdge
 {
+    // Source and target vertices of the edge
     public BaseVertex source { get; set; }
     public BaseVertex? target { get; set; }
+
+    // Name and weight (distance) of the edge
     public string Name { get; set; }
     public double weight { get; set; }
 
-    public bool IsActive { get; set; } = false;
-    public bool IsPath { get; set; } = false;
+    // Visualization flags
+    public bool IsActive { get; set; }
+    public bool IsPath { get; set; }
 
     public BaseEdge(BaseVertex source, BaseVertex? target, string name, double weight)
     {

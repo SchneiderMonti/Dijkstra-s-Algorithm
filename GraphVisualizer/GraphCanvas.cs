@@ -10,17 +10,26 @@ using Vertex;
 
 namespace GraphVisualizer;
 
+// Custom canvas control responsible for drawing the graph,
+// scaling it to the window size, and handling mouse interaction.
 public class GraphCanvas : Control
 {
+    // Vertices and edges currently displayed on the canvas
     public List<BaseVertex> Vertices { get; set; } = new();
     public List<BaseEdge> Edges { get; set; } = new();
 
+    // Radius of each drawn vertex circle
     public const double VertexRadius = 10;
+
+    // Padding between the graph and the canvas borders
     private const double Padding = 60;
 
+    // Events raised when a vertex is left-clicked or right-clicked
     public event Action<BaseVertex>? VertexClicked;
     public event Action<BaseVertex>? VertexRightClicked;
 
+    // Renders the complete graph:
+    // first edges, then vertices, then labels.
     public override void Render(DrawingContext context)
     {
         base.Render(context);
@@ -28,9 +37,10 @@ public class GraphCanvas : Control
         if (Vertices == null || Vertices.Count == 0)
             return;
 
+        // Compute scaling and positioning so the graph fits inside the window
         var layout = GetLayoutValues();
 
-        // edges first
+        // Draw edges first so vertices appear on top
         foreach (var edge in Edges)
         {
             if (edge.source == null || edge.target == null)
@@ -41,6 +51,7 @@ public class GraphCanvas : Control
 
             Pen pen = new Pen(Brushes.LightGray, 1.5);
 
+            // Highlight active edges during algorithm execution
             if (edge.IsActive)
                 pen = new Pen(Brushes.Yellow, 4);
             else if (edge.IsPath)
@@ -49,11 +60,12 @@ public class GraphCanvas : Control
             context.DrawLine(pen, start, end);
         }
 
-        // vertices on top
+        // Draw vertices on top of the edges
         foreach (var vertex in Vertices)
         {
             IBrush fill = Brushes.SteelBlue;
 
+            // Choose vertex color depending on type or current state
             if (vertex is WallVertex)
                 fill = Brushes.Red;
             else if (vertex is StartVertex)
@@ -75,6 +87,7 @@ public class GraphCanvas : Control
                 VertexRadius
             );
 
+            // Draw the city/vertex name next to the node
             var text = new FormattedText(
                 vertex.Name,
                 CultureInfo.InvariantCulture,
@@ -88,6 +101,7 @@ public class GraphCanvas : Control
         }
     }
 
+    // Detects mouse clicks on vertices and raises the corresponding event.
     protected override void OnPointerPressed(PointerPressedEventArgs e)
     {
         base.OnPointerPressed(e);
@@ -99,6 +113,7 @@ public class GraphCanvas : Control
         var properties = e.GetCurrentPoint(this).Properties;
         var layout = GetLayoutValues();
 
+        // Check whether the mouse click lies inside a vertex circle
         foreach (var vertex in Vertices)
         {
             var center = Transform(vertex, layout);
@@ -119,6 +134,8 @@ public class GraphCanvas : Control
         }
     }
 
+    // Converts logical graph coordinates into screen coordinates.
+    // This keeps the graph centered and scaled inside the canvas.
     private Point Transform(BaseVertex vertex, GraphLayout layout)
     {
         double x = (vertex.x - layout.MinX) * layout.Scale + layout.OffsetX;
@@ -126,6 +143,8 @@ public class GraphCanvas : Control
         return new Point(x, y);
     }
 
+    // Calculates scaling and offsets so that the complete graph fits
+    // into the available drawing area while preserving proportions.
     private GraphLayout GetLayoutValues()
     {
         double minX = Vertices.Min(v => (double)v.x);
@@ -141,11 +160,14 @@ public class GraphCanvas : Control
 
         double scaleX = availableWidth / graphWidth;
         double scaleY = availableHeight / graphHeight;
+
+        // Use the smaller scale so the graph fits fully inside the canvas
         double scale = Math.Min(scaleX, scaleY);
 
         double drawnWidth = graphWidth * scale;
         double drawnHeight = graphHeight * scale;
 
+        // Center the scaled graph inside the control
         double offsetX = (Bounds.Width - drawnWidth) / 2;
         double offsetY = (Bounds.Height - drawnHeight) / 2;
 
@@ -159,6 +181,7 @@ public class GraphCanvas : Control
         };
     }
 
+    // Helper class storing layout information for transforming graph coordinates.
     private class GraphLayout
     {
         public double MinX { get; set; }
