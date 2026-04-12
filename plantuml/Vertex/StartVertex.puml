@@ -1,0 +1,8 @@
+@startuml
+class StartVertex {
+    + StartVertex(x:int, y:int, name:string)
+    + <<override>> IsWalkable() : bool
+    + <<override>> GetVertexType() : string
+}
+BaseVertex <|-- StartVertex
+@enduml

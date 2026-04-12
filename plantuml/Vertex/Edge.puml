@@ -1,0 +1,12 @@
+@startuml
+class BaseEdge {
+    + Name : string <<get>> <<set>>
+    + weight : double <<get>> <<set>>
+    + IsActive : bool <<get>> <<set>> = false
+    + IsPath : bool <<get>> <<set>> = false
+    + BaseEdge(source:BaseVertex, target:BaseVertex?, name:string, weight:double)
+    + <<override>> ToString() : string
+}
+BaseEdge --> "source" BaseVertex
+BaseEdge --> "target" BaseVertex
+@enduml

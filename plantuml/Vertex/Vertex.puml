@@ -1,0 +1,15 @@
+@startuml
+class BaseVertex {
+    + x : int <<get>> <<set>>
+    + y : int <<get>> <<set>>
+    + IsVisited : bool <<get>> <<set>> = false
+    + IsPath : bool <<get>> <<set>> = false
+    + IsTarget : bool <<get>> <<set>> = false
+    + Name : string <<get>> <<set>> = ""
+    + BaseVertex(name:string)
+    + BaseVertex(x:int, y:int, name:string)
+    + <<virtual>> IsWalkable() : bool
+    + <<virtual>> GetVertexType() : string
+    + <<override>> ToString() : string
+}
+@enduml

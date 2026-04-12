@@ -2,16 +2,17 @@
 
 public class BaseVertex
 {
-    public int x {get; set;}
-    public int y {get; set;}
-    public bool IsStart {get; set;} = false;
-    public bool IsTarget {get; set;} = false;
-    public bool IsVisited {get; set;} = false;
-    public bool IsPath {get; set;} = false;
-    public bool IsWall { get; set; } = false;
+    public int x { get; set; }
+    public int y { get; set; }
+
+    public bool IsVisited { get; set; } = false;
+    public bool IsPath { get; set; } = false;
+    public bool IsTarget { get; set; } = false;
 
     public string Name { get; set; } = "";
-    static Random rand = new Random();
+
+    protected static Random rand = new Random();
+
     public BaseVertex(string name)
     {
         this.x = rand.Next(0, 100);
@@ -26,9 +27,18 @@ public class BaseVertex
         this.Name = name;
     }
 
+    public virtual bool IsWalkable()
+    {
+        return true;
+    }
+
+    public virtual string GetVertexType()
+    {
+        return "Base";
+    }
+
     public override string ToString()
     {
         return $"{this.Name} = ({this.x}, {this.y})";
     }
-
 }

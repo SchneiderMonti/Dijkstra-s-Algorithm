@@ -30,7 +30,7 @@ public class GraphCanvas : Control
 
         var layout = GetLayoutValues();
 
-        // draw edges first
+        // edges first
         foreach (var edge in Edges)
         {
             if (edge.source == null || edge.target == null)
@@ -49,14 +49,14 @@ public class GraphCanvas : Control
             context.DrawLine(pen, start, end);
         }
 
-        // draw vertices on top
+        // vertices on top
         foreach (var vertex in Vertices)
         {
             IBrush fill = Brushes.SteelBlue;
 
-            if (vertex.IsWall)
+            if (vertex is WallVertex)
                 fill = Brushes.Red;
-            else if (vertex.IsStart)
+            else if (vertex is StartVertex)
                 fill = Brushes.Gold;
             else if (vertex.IsTarget)
                 fill = Brushes.LimeGreen;
@@ -81,7 +81,7 @@ public class GraphCanvas : Control
                 FlowDirection.LeftToRight,
                 new Typeface("Arial"),
                 12,
-                Brushes.Gold
+                Brushes.White
             );
 
             context.DrawText(text, new Point(center.X + 12, center.Y - 8));
