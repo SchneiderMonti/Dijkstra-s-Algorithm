@@ -1,8 +1,0 @@
-@startuml
-class WallVertex {
-    + WallVertex(x:int, y:int, name:string)
-    + <<override>> IsWalkable() : bool
-    + <<override>> GetVertexType() : string
-}
-BaseVertex <|-- WallVertex
-@enduml

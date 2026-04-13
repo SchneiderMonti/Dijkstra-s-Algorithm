@@ -1,9 +1,0 @@
-@startuml
-class CityVertex {
-    + CityVertex(name:string)
-    + CityVertex(x:int, y:int, name:string)
-    + <<override>> IsWalkable() : bool
-    + <<override>> GetVertexType() : string
-}
-BaseVertex <|-- CityVertex
-@enduml

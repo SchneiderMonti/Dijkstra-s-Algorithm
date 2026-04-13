@@ -1,7 +1,0 @@
-@startuml
-class App <<partial>> {
-    + <<override>> Initialize() : void
-    + <<override>> OnFrameworkInitializationCompleted() : void
-}
-Application <|-- App
-@enduml
